@@ -40,14 +40,22 @@ module Chartkick
       element_id = options.delete(:id) || "chart-#{@chartkick_chart_id += 1}"
       height = options.delete(:height) || "300px"
       # content_for: nil must override default
+
+      if options.has_key?(:raw_content_for)
+        options[:content_for] = options[:raw_content_for]
+        include_script_tags = false
+      else
+        include_script_tags = true
+      end
+
       content_for = options.has_key?(:content_for) ? options.delete(:content_for) : Chartkick.content_for
 
       html = (options.delete(:html) || %[<div id="%{id}" style="height: %{height}; text-align: center; color: #999; line-height: %{height}; font-size: 14px; font-family: 'Lucida Grande', 'Lucida Sans Unicode', Verdana, Arial, Helvetica, sans-serif;">Loading...</div>]) % {id: ERB::Util.html_escape(element_id), height: ERB::Util.html_escape(height)}
 
       js = <<JS
-<script type="text/javascript">
+#{'<script type="text/javascript">' if include_script_tags}
   new Chartkick.#{klass}(#{element_id.to_json}, #{data_source.respond_to?(:chart_json) ? data_source.chart_json : data_source.to_json}, #{options.to_json});
-</script>
+#{'</script>' if include_script_tags}
 JS
       if content_for
         content_for(content_for) { js.respond_to?(:html_safe) ? js.html_safe : js }
