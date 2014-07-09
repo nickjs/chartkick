@@ -394,6 +394,18 @@
       this.renderAreaChart = function (chart) {
         self.renderLineChart(chart, "areaspline");
       };
+
+      this.renderChart = function (chart) {
+        var chartOptions = chart.options || {};
+        var options = merge(merge(defaultOptions, chartOptions), chart.options.library || {});
+        options.chart.renderTo = chart.element.id;
+
+        var data = chart.options.data || {};
+        data.data = chart.data;
+        options.series = [data];
+        console.log(options)
+        new Highcharts.Chart(options);
+      };
     };
     adapters.push(HighchartsAdapter);
   }
@@ -787,6 +799,10 @@
     renderChart("Timeline", chart);
   }
 
+  function skipProcessing(chart) {
+    renderChart("Chart", chart);
+  }
+
   function setElement(chart, element, dataSource, opts, callback) {
     if (typeof element === "string") {
       element = document.getElementById(element);
@@ -821,6 +837,9 @@
     },
     Timeline: function (element, dataSource, opts) {
       setElement(this, element, dataSource, opts, processTimelineData);
+    },
+    Chart: function(element, dataSource, opts) {
+      setElement(this, element, dataSource, opts, skipProcessing);
     },
     charts: {}
   };
