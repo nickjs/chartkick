@@ -46,7 +46,7 @@ module Chartkick
       # content_for: nil must override default
 
       if options.has_key?(:raw_content_for)
-        options[:content_for] = options[:raw_content_for]
+        options[:content_for] = options.delete(:raw_content_for)
         include_script_tags = false
       else
         include_script_tags = true
