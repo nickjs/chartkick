@@ -403,7 +403,6 @@
         var data = chart.options.data || {};
         data.data = chart.data;
         options.series = [data];
-        console.log(options)
         new Highcharts.Chart(options);
       };
     };
